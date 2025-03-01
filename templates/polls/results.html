@@ -3,86 +3,95 @@
 {% block title %}Results | {{ poll.title }} | What's for Lunch?{% endblock %}
 
 {% block content %}
-<div class="card">
-    <h2 class="card-title">Results for "{{ poll.title }}"</h2>
+    <div class="card">
+        <h2 class="card-title">Results for "{{ poll.title }}"</h2>
 
-    <div class="card-meta">
-        {% if poll.creator_id %}
-            <p>Creator: {{ poll.creator.username }}</p>
-        {% elif poll.creator_name %}
-            <p>Creator: {{ poll.creator_name }}</p>
-        {% endif %}
-
-        <p>Created: {{ poll.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
-
-        {% if poll.deadline %}
-            <p>Deadline: {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}</p>
-        {% endif %}
-
-        <p>Status:
-            {% if poll.active and not poll.is_expired() %}
-                <span class="badge badge-success">Voting in progress</span>
-            {% else %}
-                <span class="badge badge-warning">Poll completed</span>
+        <div class="card-meta">
+            {% if poll.creator_id %}
+                <p>Creator: {{ poll.creator.username }}</p>
+            {% elif poll.creator_name %}
+                <p>Creator: {{ poll.creator_name }}</p>
             {% endif %}
-        </p>
-    </div>
 
-    {% if poll.description %}
-        <p class="poll-description">{{ poll.description }}</p>
-    {% endif %}
+            <p>Created: {{ poll.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
 
-    <div class="share-poll">
-        <button id="copy-poll-link" class="btn btn-secondary" data-link="{{ url_for('polls.results', poll_hash=poll.url_hash, _external=True) }}">
-            Copy results link
-        </button>
-    </div>
+            {% if poll.deadline %}
+                <p>Deadline: {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}</p>
+            {% endif %}
 
-    <hr>
-
-    <h3>Voting results:</h3>
-
-    {% if results %}
-        <div class="results-list">
-            {% for result in results %}
-                <div class="result-item {% if loop.first %}winner{% endif %}">
-                    <h4>{{ result.option.name }} {% if loop.first %}🏆{% endif %}</h4>
-
-                    {% if result.option.description %}
-                        <p>{{ result.option.description }}</p>
-                    {% endif %}
-
-                    <div class="result-score">
-                        <span class="likes">👍 {{ result.likes }}</span>
-                        <span class="neutrals">😐 {{ result.neutrals }}</span>
-                        <span class="dislikes">👎 {{ result.dislikes }}</span>
-                        <span class="total-score">Final score: <strong>{{ result.score }}</strong></span>
-                    </div>
-                </div>
-            {% endfor %}
+            <p>Status:
+                {% if poll.active and not poll.is_expired() %}
+                    <span class="badge badge-success">Voting in progress</span>
+                {% else %}
+                    <span class="badge badge-warning">Poll completed</span>
+                {% endif %}
+            </p>
         </div>
 
-        {% if poll.active and not poll.is_expired() %}
-            <div class="poll-actions">
-                <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Participate in voting</a>
-            </div>
+        {% if poll.description %}
+            <p class="poll-description">{{ poll.description }}</p>
         {% endif %}
-    {% else %}
-        <p>No one has voted in this poll yet.</p>
 
-        {% if poll.active and not poll.is_expired() %}
-            <div class="poll-actions">
-                <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Participate in voting</a>
-            </div>
-        {% endif %}
-    {% endif %}
+        <div class="share-poll">
+            <button id="copy-poll-link" class="btn btn-secondary"
+                    data-link="{{ url_for('polls.results', poll_hash=poll.url_hash, _external=True) }}">
+                Copy results link
+            </button>
+        </div>
 
-    {% if poll.active and (current_user.is_authenticated and poll.creator_id == current_user.id) or (not current_user.is_authenticated and 'created_polls' in session and poll.id in session['created_polls']) %}
         <hr>
-        <div class="admin-actions">
-            <h4>Creator actions:</h4>
-            <button class="btn btn-warning btn-finish-poll" data-url="{{ url_for('polls.finish_poll', poll_hash=poll.url_hash) }}">Finish poll</button>
-        </div>
-    {% endif %}
-</div>
+
+        <h3>Voting results:</h3>
+
+        {% if results %}
+            <div class="results-list">
+                {% for result in results %}
+                    <div class="result-item {% if loop.first %}winner{% endif %}">
+                        <h4>{{ result.option.name }} {% if loop.first %}🏆{% endif %}</h4>
+
+                        {% if result.option.description %}
+                            <p>{{ result.option.description }}</p>
+                        {% endif %}
+
+                        <div class="result-score">
+                            <span class="likes">👍 {{ result.likes }}</span>
+                            <span class="neutrals">😐 {{ result.neutrals }}</span>
+                            <span class="dislikes">👎 {{ result.dislikes }}</span>
+                            <span class="total-score">Final score: <strong>{{ result.score }}</strong></span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if poll.active and not poll.is_expired() %}
+                <div class="poll-actions">
+                    <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">
+                        {% if has_voted %}
+                            Change your vote
+                        {% else %}
+                            Participate in voting
+                        {% endif %}
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <p>No one has voted in this poll yet.</p>
+
+            {% if poll.active and not poll.is_expired() %}
+                <div class="poll-actions">
+                    <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Participate in voting</a>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        {% if poll.active and (current_user.is_authenticated and poll.creator_id == current_user.id) or (not current_user.is_authenticated and 'created_polls' in session and poll.id in session['created_polls']) %}
+            <hr>
+            <div class="admin-actions">
+                <h4>Creator actions:</h4>
+                <button class="btn btn-warning btn-finish-poll"
+                        data-url="{{ url_for('polls.finish_poll', poll_hash=poll.url_hash) }}">Finish poll
+                </button>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

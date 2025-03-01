@@ -3,47 +3,46 @@
 {% block title %}Home | What's for Lunch?{% endblock %}
 
 {% block content %}
-<div class="hero">
-    <h2>Decide together what to order for lunch!</h2>
-    <p>Create polls, vote and coordinate food orders for your team</p>
-    <a href="{{ url_for('polls.create_poll') }}" class="btn">Create a new poll</a>
-</div>
-
-<h2>Active Polls</h2>
-
-{% if polls %}
-    <div class="poll-list">
-        {% for poll in polls %}
-            <div class="card poll-card">
-                <div class="card-body">
-                    <h3 class="card-title">{{ poll.title }}</h3>
-
-                    <div class="card-meta">
-                        {% if poll.creator_id %}
-                            <p>Creator: {{ poll.creator.username }}</p>
-                        {% elif poll.creator_name %}
-                            <p>Creator: {{ poll.creator_name }}</p>
-                        {% endif %}
-
-                        <p>Created: {{ poll.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
-
-                        {% if poll.deadline %}
-                            <p>Deadline: {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}</p>
-                        {% endif %}
-                    </div>
-
-                    {% if poll.description %}
-                        <p>{{ poll.description }}</p>
-                    {% endif %}
-                </div>
-
-                <div class="card-footer">
-                    <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Go to poll</a>
-                </div>
-            </div>
-        {% endfor %}
+    <div class="hero">
+        <h2>Decide together what to order for lunch!</h2>
+        <p>Create polls, vote and coordinate food orders for your team</p>
+        <a href="{{ url_for('polls.create_poll') }}" class="btn">Create a new poll</a>
     </div>
-{% else %}
-    <p>No active polls right now. <a href="{{ url_for('polls.create_poll') }}">Create a new poll!</a></p>
-{% endif %}
+
+    <div class="features">
+        <div class="card">
+            <h3>🔒 Private Polls</h3>
+            <p>Each poll has a unique link that you can share only with people you want to participate.</p>
+        </div>
+
+        <div class="card">
+            <h3>👥 Team Voting</h3>
+            <p>Your team members can vote on lunch options with simple like/neutral/dislike reactions.</p>
+        </div>
+
+        <div class="card">
+            <h3>📊 Instant Results</h3>
+            <p>Get real-time results to see which lunch option is winning. No more lengthy discussions!</p>
+        </div>
+
+        <div class="card">
+            <h3>⏱️ Deadlines</h3>
+            <p>Set a deadline for voting to make sure you order lunch on time.</p>
+        </div>
+    </div>
+
+    {% if current_user.is_authenticated %}
+        <div class="cta-box">
+            <h3>Ready to create your lunch poll?</h3>
+            <a href="{{ url_for('polls.create_poll') }}" class="btn">Create now</a>
+            <a href="{{ url_for('history.index') }}" class="btn btn-secondary">View your polls</a>
+        </div>
+    {% else %}
+        <div class="cta-box">
+            <h3>Want to track your polls?</h3>
+            <p>Create an account to keep track of all your polls in one place.</p>
+            <a href="{{ url_for('auth.register') }}" class="btn">Register</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Login</a>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -10,8 +10,7 @@ poll_routes = Blueprint('polls', __name__)
 
 @poll_routes.route('/')
 def index():
-    active_polls = Poll.query.filter_by(active=True).order_by(Poll.created_at.desc()).all()
-    return render_template('index.html', polls=active_polls)
+    return render_template('index.html')
 
 
 @poll_routes.route('/new', methods=['GET', 'POST'])
@@ -30,9 +29,8 @@ def create_poll():
             poll.creator_name = form.creator_name.data
 
         db.session.add(poll)
-        db.session.commit()  # Commit here to get poll.id
+        db.session.commit()
 
-        # Now that we have poll.id, add it to the session
         if not current_user.is_authenticated:
             if 'created_polls' not in session:
                 session['created_polls'] = []
@@ -49,7 +47,6 @@ def create_poll():
 def add_options(poll_id):
     poll = Poll.query.get_or_404(poll_id)
 
-    # Modified authorization check
     is_authorized = False
     if current_user.is_authenticated and poll.creator_id == current_user.id:
         is_authorized = True
@@ -82,7 +79,6 @@ def add_options(poll_id):
 def view(poll_hash):
     poll = Poll.query.filter_by(url_hash=poll_hash).first_or_404()
 
-    # Check if the poll has options
     options = Option.query.filter_by(poll_id=poll.id).all()
     if not options:
         flash('This poll has no options to vote on yet.')
@@ -94,18 +90,29 @@ def view(poll_hash):
     if 'session_id' not in session:
         session['session_id'] = str(uuid.uuid4())
 
-    existing_vote = Vote.query.filter_by(
+    existing_votes = Vote.query.filter_by(
         poll_id=poll.id,
         session_id=session['session_id']
-    ).first()
+    ).all()
 
-    if existing_vote:
-        flash('You have already voted in this poll.')
-        return redirect(url_for('polls.results', poll_hash=poll_hash))
+    user_votes = {}
+    voter_name = ""
+    if existing_votes:
+        for vote in existing_votes:
+            user_votes[vote.option_id] = vote.vote_type
+            voter_name = vote.voter_name
 
     form = VoteForm()
 
+    if not form.voter_name.data and voter_name:
+        form.voter_name.data = voter_name
+
     if form.validate_on_submit():
+
+        if existing_votes:
+            for vote in existing_votes:
+                db.session.delete(vote)
+
         for option in options:
             vote_type = request.form.get(f'vote_{option.id}', 0)
 
@@ -122,7 +129,7 @@ def view(poll_hash):
         flash('Your vote has been recorded!')
         return redirect(url_for('polls.results', poll_hash=poll_hash))
 
-    return render_template('polls/view.html', poll=poll, form=form, options=options)
+    return render_template('polls/view.html', poll=poll, form=form, options=options, user_votes=user_votes)
 
 
 @poll_routes.route('/p/<string:poll_hash>/results')
@@ -136,14 +143,21 @@ def results(poll_hash):
         reverse=True
     )
 
-    return render_template('polls/results.html', poll=poll, results=sorted_results)
+    has_voted = False
+    if 'session_id' in session:
+        existing_vote = Vote.query.filter_by(
+            poll_id=poll.id,
+            session_id=session['session_id']
+        ).first()
+        has_voted = existing_vote is not None
+
+    return render_template('polls/results.html', poll=poll, results=sorted_results, has_voted=has_voted)
 
 
 @poll_routes.route('/p/<string:poll_hash>/finish', methods=['POST'])
 def finish_poll(poll_hash):
     poll = Poll.query.filter_by(url_hash=poll_hash).first_or_404()
 
-    # Check permissions to finish the poll
     if current_user.is_authenticated and poll.creator_id == current_user.id:
         authorized = True
     elif not current_user.is_authenticated and 'created_polls' in session and poll.id in session['created_polls']:

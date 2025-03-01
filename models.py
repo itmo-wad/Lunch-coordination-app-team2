@@ -45,13 +45,13 @@ class Poll(db.Model):
         self.url_hash = secrets.token_hex(8)
 
     def is_expired(self):
-            if not self.deadline:
-                return False
-            if self.deadline.tzinfo is None:
-                deadline_aware = self.deadline.replace(tzinfo=timezone.utc)
-            else:
-                deadline_aware = self.deadline
-            return datetime.now(timezone.utc) > deadline_aware
+        if not self.deadline:
+            return False
+        if self.deadline.tzinfo is None:
+            deadline_aware = self.deadline.replace(tzinfo=timezone.utc)
+        else:
+            deadline_aware = self.deadline
+        return datetime.now(timezone.utc) > deadline_aware
 
     def get_results(self):
         results = {}

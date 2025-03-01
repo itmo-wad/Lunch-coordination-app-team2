@@ -8,39 +8,39 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1><a href="{{ url_for('polls.index') }}">🍕 What's for Lunch?</a></h1>
-            <nav>
-                <ul>
-                    <li><a href="{{ url_for('polls.index') }}">Home</a></li>
-                    <li><a href="{{ url_for('polls.create_poll') }}">Create Poll</a></li>
-                    <li><a href="{{ url_for('history.index') }}">History</a></li>
-                    {% if current_user.is_authenticated %}
-                        <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-                    {% else %}
-                        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-                        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
-    </header>
+<header>
+    <div class="container">
+        <h1><a href="{{ url_for('polls.index') }}">🍕 What's for Lunch?</a></h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('polls.index') }}">Home</a></li>
+                <li><a href="{{ url_for('polls.create_poll') }}">Create Poll</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('history.index') }}">My Polls</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                    <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
 
-    <main class="container">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for message in messages %}
-                        <div class="flash-message">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+<main class="container">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-        {% block content %}{% endblock %}
-    </main>
+    {% block content %}{% endblock %}
+</main>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
