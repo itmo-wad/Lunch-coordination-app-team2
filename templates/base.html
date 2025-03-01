@@ -1,26 +1,26 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{% block title %}Что на обед?{% endblock %}</title>
+    <title>{% block title %}What's for Lunch?{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
         <div class="container">
-            <h1><a href="{{ url_for('polls.index') }}">🍕 Что на обед?</a></h1>
+            <h1><a href="{{ url_for('polls.index') }}">🍕 What's for Lunch?</a></h1>
             <nav>
                 <ul>
-                    <li><a href="{{ url_for('polls.index') }}">Главная</a></li>
-                    <li><a href="{{ url_for('polls.create_poll') }}">Создать опрос</a></li>
-                    <li><a href="{{ url_for('history.index') }}">История</a></li>
+                    <li><a href="{{ url_for('polls.index') }}">Home</a></li>
+                    <li><a href="{{ url_for('polls.create_poll') }}">Create Poll</a></li>
+                    <li><a href="{{ url_for('history.index') }}">History</a></li>
                     {% if current_user.is_authenticated %}
-                        <li><a href="{{ url_for('auth.logout') }}">Выйти</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('auth.login') }}">Войти</a></li>
-                        <li><a href="{{ url_for('auth.register') }}">Регистрация</a></li>
+                        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
                     {% endif %}
                 </ul>
             </nav>
@@ -40,12 +40,6 @@
 
         {% block content %}{% endblock %}
     </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; {{ now.year }} Что на обед? - Приложение для координации обедов</p>
-        </div>
-    </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

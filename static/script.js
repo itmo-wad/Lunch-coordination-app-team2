@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Обработка голосования
+    // Poll voting handling
     const voteButtons = document.querySelectorAll('.vote-button');
     if (voteButtons.length > 0) {
         voteButtons.forEach(button => {
@@ -8,32 +8,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 const voteType = this.getAttribute('data-vote-type');
                 const buttonsForOption = document.querySelectorAll(`.vote-button[data-option-id="${optionId}"]`);
 
-                // Сначала удаляем все активные классы для этой опции
+                // First remove all active classes for this option
                 buttonsForOption.forEach(btn => {
                     btn.classList.remove('active');
                 });
 
-                // Добавляем активный класс нажатой кнопке
+                // Add active class to clicked button
                 this.classList.add('active');
 
-                // Устанавливаем значение в скрытое поле
+                // Set value in hidden field
                 document.getElementById(`vote_${optionId}`).value = voteType;
             });
         });
     }
 
-    // Удаление опции при создании опроса
+    // Remove option when creating poll
     const removeOptionButtons = document.querySelectorAll('.remove-option');
     if (removeOptionButtons.length > 0) {
         removeOptionButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
-                if (confirm('Вы уверены, что хотите удалить эту опцию?')) {
+                if (confirm('Are you sure you want to remove this option?')) {
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = this.getAttribute('data-url');
 
-                    // Добавляем CSRF токен
+                    // Add CSRF token
                     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                     const csrfInput = document.createElement('input');
                     csrfInput.type = 'hidden';
@@ -48,14 +48,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Копирование ссылки на опрос в буфер обмена
+    // Copy poll link to clipboard
     const copyLinkButton = document.getElementById('copy-poll-link');
     if (copyLinkButton) {
         copyLinkButton.addEventListener('click', function(e) {
             e.preventDefault();
             const pollLink = this.getAttribute('data-link');
 
-            // Создаем временный input для копирования текста
+            // Create temporary input for copying text
             const tempInput = document.createElement('input');
             tempInput.value = pollLink;
             document.body.appendChild(tempInput);
@@ -63,57 +63,55 @@ document.addEventListener('DOMContentLoaded', function() {
             document.execCommand('copy');
             document.body.removeChild(tempInput);
 
-            // Изменяем текст кнопки на время
+            // Change button text temporarily
             const originalText = this.textContent;
-            this.textContent = 'Ссылка скопирована!';
+            this.textContent = 'Link copied!';
             setTimeout(() => {
                 this.textContent = originalText;
             }, 2000);
         });
     }
 
-    // Обратный отсчет для дедлайна
+    // Countdown for deadline
     const deadlineElement = document.getElementById('poll-deadline');
     if (deadlineElement) {
         const deadlineTime = new Date(deadlineElement.getAttribute('data-deadline')).getTime();
 
-        // Обновляем каждую секунду
+        // Update every second
         const countdown = setInterval(function() {
             const now = new Date().getTime();
             const distance = deadlineTime - now;
 
-            // Расчет времени
+            // Calculate time
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // Отображаем результат
-            deadlineElement.textContent = `${hours}ч ${minutes}м ${seconds}с`;
+            // Display result
+            deadlineElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
 
-            // Если время истекло
+            // If time has expired
             if (distance < 0) {
                 clearInterval(countdown);
-                deadlineElement.textContent = "Голосование завершено";
+                deadlineElement.textContent = "Voting completed";
 
-                // Перезагружаем страницу, чтобы показать результаты
+                // Reload page to show results
                 location.reload();
             }
         }, 1000);
     }
-});
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Обработка завершения опроса
+    // Poll finishing handling
     const finishPollButton = document.querySelector('.btn-finish-poll');
     if (finishPollButton) {
         finishPollButton.addEventListener('click', function(e) {
             e.preventDefault();
-            if (confirm('Вы уверены, что хотите завершить опрос? После этого голосование будет остановлено.')) {
+            if (confirm('Are you sure you want to finish the poll? Voting will be stopped.')) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = this.getAttribute('data-url');
 
-                // Добавляем CSRF токен
+                // Add CSRF token
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                 const csrfInput = document.createElement('input');
                 csrfInput.type = 'hidden';
@@ -125,107 +123,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.submit();
             }
         });
-    }
-
-    // Обработка голосования
-    const voteButtons = document.querySelectorAll('.vote-button');
-    if (voteButtons.length > 0) {
-        voteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const optionId = this.getAttribute('data-option-id');
-                const voteType = this.getAttribute('data-vote-type');
-                const buttonsForOption = document.querySelectorAll(`.vote-button[data-option-id="${optionId}"]`);
-
-                // Сначала удаляем все активные классы для этой опции
-                buttonsForOption.forEach(btn => {
-                    btn.classList.remove('active');
-                });
-
-                // Добавляем активный класс нажатой кнопке
-                this.classList.add('active');
-
-                // Устанавливаем значение в скрытое поле
-                document.getElementById(`vote_${optionId}`).value = voteType;
-            });
-        });
-    }
-
-    // Удаление опции при создании опроса
-    const removeOptionButtons = document.querySelectorAll('.remove-option');
-    if (removeOptionButtons.length > 0) {
-        removeOptionButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (confirm('Вы уверены, что хотите удалить эту опцию?')) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = this.getAttribute('data-url');
-
-                    // Добавляем CSRF токен
-                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    const csrfInput = document.createElement('input');
-                    csrfInput.type = 'hidden';
-                    csrfInput.name = 'csrf_token';
-                    csrfInput.value = csrfToken;
-                    form.appendChild(csrfInput);
-
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            });
-        });
-    }
-
-    // Копирование ссылки на опрос в буфер обмена
-    const copyLinkButton = document.getElementById('copy-poll-link');
-    if (copyLinkButton) {
-        copyLinkButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            const pollLink = this.getAttribute('data-link');
-
-            // Создаем временный input для копирования текста
-            const tempInput = document.createElement('input');
-            tempInput.value = pollLink;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-
-            // Изменяем текст кнопки на время
-            const originalText = this.textContent;
-            this.textContent = 'Ссылка скопирована!';
-            setTimeout(() => {
-                this.textContent = originalText;
-            }, 2000);
-        });
-    }
-
-    // Обратный отсчет для дедлайна
-    const deadlineElement = document.getElementById('poll-deadline');
-    if (deadlineElement) {
-        const deadlineTime = new Date(deadlineElement.getAttribute('data-deadline')).getTime();
-
-        // Обновляем каждую секунду
-        const countdown = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = deadlineTime - now;
-
-            // Расчет времени
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // Отображаем результат
-            deadlineElement.textContent = `${hours}ч ${minutes}м ${seconds}с`;
-
-            // Если время истекло
-            if (distance < 0) {
-                clearInterval(countdown);
-                deadlineElement.textContent = "Голосование завершено";
-
-                // Перезагружаем страницу, чтобы показать результаты
-                location.reload();
-            }
-        }, 1000);
     }
 });

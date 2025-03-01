@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}История опросов | Что на обед?{% endblock %}
+{% block title %}Poll History | What's for Lunch?{% endblock %}
 
 {% block content %}
-<h2>История ваших опросов</h2>
+<h2>Your Poll History</h2>
 
 {% if polls %}
     <div class="poll-list">
@@ -11,41 +11,41 @@
             <div class="card poll-card">
                 <div class="card-body">
                     <h3 class="card-title">{{ poll.title }}</h3>
-                    
+
                     <div class="card-meta">
-                        <p>Создан: {{ poll.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
-                        
+                        <p>Created: {{ poll.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+
                         {% if poll.deadline %}
-                            <p>Дедлайн: {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}</p>
+                            <p>Deadline: {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}</p>
                         {% endif %}
-                        
-                        <p>Статус: 
+
+                        <p>Status:
                             {% if poll.active and not poll.is_expired() %}
-                                <span class="badge badge-success">Активный</span>
+                                <span class="badge badge-success">Active</span>
                             {% elif poll.is_expired() %}
-                                <span class="badge badge-warning">Завершен</span>
+                                <span class="badge badge-warning">Completed</span>
                             {% else %}
-                                <span class="badge badge-secondary">Неактивный</span>
+                                <span class="badge badge-secondary">Inactive</span>
                             {% endif %}
                         </p>
                     </div>
-                    
+
                     {% if poll.description %}
                         <p>{{ poll.description }}</p>
                     {% endif %}
                 </div>
-                
+
                 <div class="card-footer">
-                    <a href="{{ url_for('polls.results', poll_hash=poll.url_hash) }}" class="btn">Посмотреть результаты</a>
-                    
+                    <a href="{{ url_for('polls.results', poll_hash=poll.url_hash) }}" class="btn">View results</a>
+
                     {% if poll.active and not poll.is_expired() %}
-                        <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn btn-secondary">Перейти к опросу</a>
+                        <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn btn-secondary">Go to poll</a>
                     {% endif %}
                 </div>
             </div>
         {% endfor %}
     </div>
 {% else %}
-    <p>У вас пока нет созданных опросов. <a href="{{ url_for('polls.create_poll') }}">Создайте опрос!</a></p>
+    <p>You haven't created any polls yet. <a href="{{ url_for('polls.create_poll') }}">Create a poll!</a></p>
 {% endif %}
 {% endblock %}

@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Вход | Что на обед?{% endblock %}
+{% block title %}Login | What's for Lunch?{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h2 class="card-title">Вход в систему</h2>
-    
+    <h2 class="card-title">Login</h2>
+
     <form method="POST" action="{{ url_for('auth.login') }}">
         {{ form.hidden_tag() }}
-        
+
         <div class="form-group">
             {{ form.username.label }}
             {{ form.username(class="form-control") }}
@@ -16,7 +16,7 @@
                 <span class="error">{{ error }}</span>
             {% endfor %}
         </div>
-        
+
         <div class="form-group">
             {{ form.password.label }}
             {{ form.password(class="form-control") }}
@@ -24,18 +24,18 @@
                 <span class="error">{{ error }}</span>
             {% endfor %}
         </div>
-        
+
         <div class="form-group">
             {{ form.remember_me() }} {{ form.remember_me.label }}
         </div>
-        
+
         <div class="form-group">
             {{ form.submit(class="btn") }}
         </div>
     </form>
-    
+
     <div class="card-footer">
-        <p>Нет аккаунта? <a href="{{ url_for('auth.register') }}">Зарегистрируйтесь</a></p>
+        <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register</a></p>
     </div>
 </div>
 {% endblock %}

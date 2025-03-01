@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Добавление опций | Что на обед?{% endblock %}
+{% block title %}Add Options | What's for Lunch?{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h2 class="card-title">Добавление опций для опроса "{{ poll.title }}"</h2>
-    
+    <h2 class="card-title">Add options for poll "{{ poll.title }}"</h2>
+
     <div class="card-meta">
-        <p>Добавьте варианты обеда, за которые участники смогут голосовать</p>
+        <p>Add lunch options for participants to vote on</p>
     </div>
-    
+
     <form method="POST" action="{{ url_for('polls.add_options', poll_id=poll.id) }}">
         {{ form.hidden_tag() }}
-        
+
         <div class="form-group">
             {{ form.name.label }}
             {{ form.name(class="form-control") }}
@@ -20,7 +20,7 @@
                 <span class="error">{{ error }}</span>
             {% endfor %}
         </div>
-        
+
         <div class="form-group">
             {{ form.description.label }}
             {{ form.description(class="form-control", rows=2) }}
@@ -28,16 +28,16 @@
                 <span class="error">{{ error }}</span>
             {% endfor %}
         </div>
-        
+
         <div class="form-group">
             {{ form.submit(class="btn") }}
         </div>
     </form>
-    
+
     <hr>
-    
-    <h3>Добавленные опции:</h3>
-    
+
+    <h3>Added options:</h3>
+
     {% if options %}
         <div class="options-list">
             {% for option in options %}
@@ -50,14 +50,14 @@
             {% endfor %}
         </div>
     {% else %}
-        <p>Пока нет добавленных опций. Добавьте хотя бы две опции для создания опроса.</p>
+        <p>No options added yet. Add at least two options to create a poll.</p>
     {% endif %}
-    
+
     <div class="form-actions">
         {% if options|length >= 2 %}
-            <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Завершить создание опроса</a>
+            <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Finish creating poll</a>
         {% else %}
-            <p>Добавьте минимум 2 варианта для завершения опроса</p>
+            <p>Add at least 2 options to finish the poll</p>
         {% endif %}
     </div>
 </div>

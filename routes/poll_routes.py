@@ -37,7 +37,7 @@ def create_poll():
         db.session.add(poll)
         db.session.commit()
 
-        flash('Опрос успешно создан!')
+        flash('Poll created successfully!')
         return redirect(url_for('polls.add_options', poll_id=poll.id))
 
     return render_template('polls/create.html', form=form)
@@ -64,7 +64,7 @@ def add_options(poll_id):
         db.session.add(option)
         db.session.commit()
 
-        flash('Опция добавлена!')
+        flash('Option added!')
         return redirect(url_for('polls.add_options', poll_id=poll_id))
 
     options = Option.query.filter_by(poll_id=poll_id).all()
@@ -87,7 +87,7 @@ def view(poll_hash):
     ).first()
 
     if existing_vote:
-        flash('Вы уже проголосовали в этом опросе.')
+        flash('You have already voted in this poll.')
         return redirect(url_for('polls.results', poll_hash=poll_hash))
 
     form = VoteForm()
@@ -107,13 +107,13 @@ def view(poll_hash):
             db.session.add(vote)
 
         db.session.commit()
-        flash('Ваш голос учтен!')
+        flash('Your vote has been recorded!')
         return redirect(url_for('polls.results', poll_hash=poll_hash))
 
     return render_template('polls/view.html', poll=poll, form=form, options=options)
 
 
-@poll_routes.route('/p/<string:poll_hash>/results')  # TODO: algorithm
+@poll_routes.route('/p/<string:poll_hash>/results')
 def results(poll_hash):
     poll = Poll.query.filter_by(url_hash=poll_hash).first_or_404()
     results = poll.get_results()
@@ -131,7 +131,7 @@ def results(poll_hash):
 def finish_poll(poll_hash):
     poll = Poll.query.filter_by(url_hash=poll_hash).first_or_404()
 
-    # Проверка прав на завершение опроса
+    # Check permissions to finish the poll
     if current_user.is_authenticated and poll.creator_id == current_user.id:
         authorized = True
     elif not current_user.is_authenticated and 'created_polls' in session and poll.id in session['created_polls']:
@@ -145,5 +145,5 @@ def finish_poll(poll_hash):
     poll.active = False
     db.session.commit()
 
-    flash('Опрос успешно завершен.')
+    flash('Poll successfully completed.')
     return redirect(url_for('polls.results', poll_hash=poll_hash))

@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Главная | Что на обед?{% endblock %}
+{% block title %}Home | What's for Lunch?{% endblock %}
 
 {% block content %}
 <div class="hero">
-    <h2>Решайте вместе, что заказать на обед!</h2>
-    <p>Создавайте опросы, голосуйте и координируйте заказы еды для вашей команды</p>
-    <a href="{{ url_for('polls.create_poll') }}" class="btn">Создать новый опрос</a>
+    <h2>Decide together what to order for lunch!</h2>
+    <p>Create polls, vote and coordinate food orders for your team</p>
+    <a href="{{ url_for('polls.create_poll') }}" class="btn">Create a new poll</a>
 </div>
 
-<h2>Активные опросы</h2>
+<h2>Active Polls</h2>
 
 {% if polls %}
     <div class="poll-list">
@@ -17,33 +17,33 @@
             <div class="card poll-card">
                 <div class="card-body">
                     <h3 class="card-title">{{ poll.title }}</h3>
-                    
+
                     <div class="card-meta">
                         {% if poll.creator_id %}
-                            <p>Создатель: {{ poll.creator.username }}</p>
+                            <p>Creator: {{ poll.creator.username }}</p>
                         {% elif poll.creator_name %}
-                            <p>Создатель: {{ poll.creator_name }}</p>
+                            <p>Creator: {{ poll.creator_name }}</p>
                         {% endif %}
-                        
-                        <p>Создан: {{ poll.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
-                        
+
+                        <p>Created: {{ poll.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+
                         {% if poll.deadline %}
-                            <p>Дедлайн: {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}</p>
+                            <p>Deadline: {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}</p>
                         {% endif %}
                     </div>
-                    
+
                     {% if poll.description %}
                         <p>{{ poll.description }}</p>
                     {% endif %}
                 </div>
-                
+
                 <div class="card-footer">
-                    <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Перейти к опросу</a>
+                    <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Go to poll</a>
                 </div>
             </div>
         {% endfor %}
     </div>
 {% else %}
-    <p>Сейчас нет активных опросов. <a href="{{ url_for('polls.create_poll') }}">Создайте новый опрос!</a></p>
+    <p>No active polls right now. <a href="{{ url_for('polls.create_poll') }}">Create a new poll!</a></p>
 {% endif %}
 {% endblock %}
