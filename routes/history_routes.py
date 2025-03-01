@@ -5,7 +5,7 @@ from models import Poll
 history_routes = Blueprint('history', __name__, url_prefix='/history')
 
 
-@history_routes.route('/history')
+@history_routes.route('/')
 def index():
     if current_user.is_authenticated:
         polls = Poll.query.filter_by(creator_id=current_user.id).order_by(Poll.created_at.desc()).all()

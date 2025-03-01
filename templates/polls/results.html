@@ -1,10 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}Результаты | {{ poll.title }} | Что на обед?{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">Результаты опроса "{{ poll.title }}"</h2>
+    
+    <div class="card-meta">
+        {% if poll.creator_id %}
+            <p>Создатель: {{ poll.creator.username }}</p>
+        {% elif poll.creator_name %}
+            <p>Создатель: {{ poll.creator_name }}</p>
+        {% endif %}
+        
+        <p>Создан: {{ poll.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+        
+        {% if poll.deadline %}
+            <p>Дедлайн: {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}</p>
+        {% endif %}
+        
+        <p>Статус: 
+            {% if poll.active and not poll.is_expired() %}
+                <span class="badge badge-success">Голосование продолжается</span>
+            {% else %}
+                <span class="badge badge-warning">Опрос завершен</span>
+            {% endif %}
+        </p>
+    </div>
+    
+    {% if poll.description %}
+        <p class="poll-description">{{ poll.description }}</p>
+    {% endif %}
+    
+    <div class="share-poll">
+        <button id="copy-poll-link" class="btn btn-secondary" data-link="{{ url_for('polls.results', poll_hash=poll.url_hash, _external=True) }}">
+            Скопировать ссылку с результатами
+        </button>
+    </div>
+    
+    <hr>
+    
+    <h3>Итоги голосования:</h3>
+    
+    {% if results %}
+        <div class="results-list">
+            {% for result in results %}
+                <div class="result-item {% if loop.first %}winner{% endif %}">
+                    <h4>{{ result.option.name }} {% if loop.first %}🏆{% endif %}</h4>
+                    
+                    {% if result.option.description %}
+                        <p>{{ result.option.description }}</p>
+                    {% endif %}
+                    
+                    <div class="result-score">
+                        <span class="likes">👍 {{ result.likes }}</span>
+                        <span class="neutrals">😐 {{ result.neutrals }}</span>
+                        <span class="dislikes">👎 {{ result.dislikes }}</span>
+                        <span class="total-score">Итоговый рейтинг: <strong>{{ result.score }}</strong></span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if poll.active and not poll.is_expired() %}
+            <div class="poll-actions">
+                <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Принять участие в голосовании</a>
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Никто еще не проголосовал в этом опросе.</p>
+        
+        {% if poll.active and not poll.is_expired() %}
+            <div class="poll-actions">
+                <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Принять участие в голосовании</a>
+            </div>
+        {% endif %}
+    {% endif %}
+    
+    {% if poll.active and (current_user.is_authenticated and poll.creator_id == current_user.id) or (not current_user.is_authenticated and 'created_polls' in session and poll.id in session['created_polls']) %}
+        <hr>
+        <div class="admin-actions">
+            <h4>Действия создателя:</h4>
+            <button class="btn btn-warning btn-finish-poll" data-url="{{ url_for('polls.finish_poll', poll_hash=poll.url_hash) }}">Завершить опрос</button>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

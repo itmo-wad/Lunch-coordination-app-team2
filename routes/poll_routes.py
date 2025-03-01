@@ -125,3 +125,25 @@ def results(poll_hash):
     )
 
     return render_template('polls/results.html', poll=poll, results=sorted_results)
+
+
+@poll_routes.route('/p/<string:poll_hash>/finish', methods=['POST'])
+def finish_poll(poll_hash):
+    poll = Poll.query.filter_by(url_hash=poll_hash).first_or_404()
+
+    # Проверка прав на завершение опроса
+    if current_user.is_authenticated and poll.creator_id == current_user.id:
+        authorized = True
+    elif not current_user.is_authenticated and 'created_polls' in session and poll.id in session['created_polls']:
+        authorized = True
+    else:
+        authorized = False
+
+    if not authorized:
+        abort(403)
+
+    poll.active = False
+    db.session.commit()
+
+    flash('Опрос успешно завершен.')
+    return redirect(url_for('polls.results', poll_hash=poll_hash))

@@ -16,9 +16,7 @@ csrf = CSRFProtect(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-with app.app_context():
-    db.create_all()
-
+from models import User, Poll, Option, Vote
 
 @app.context_processor
 def inject_now():
@@ -29,6 +27,9 @@ from routes import auth_routes, poll_routes, history_routes
 app.register_blueprint(auth_routes)
 app.register_blueprint(poll_routes)
 app.register_blueprint(history_routes)
+
+with app.app_context():
+    db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)

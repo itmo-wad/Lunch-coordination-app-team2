@@ -1,10 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}Создание опроса | Что на обед?{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">Создание нового опроса</h2>
+    
+    <form method="POST" action="{{ url_for('polls.create_poll') }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.title.label }}
+            {{ form.title(class="form-control") }}
+            {% for error in form.title.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class="form-control", rows=4) }}
+            {% for error in form.description.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.deadline.label }}
+            {{ form.deadline(class="form-control") }}
+            {% for error in form.deadline.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+            <small class="form-text text-muted">Если указать дедлайн, то опрос автоматически закроется в указанное время.</small>
+        </div>
+        
+        {% if not current_user.is_authenticated %}
+            <div class="form-group">
+                {{ form.creator_name.label }}
+                {{ form.creator_name(class="form-control") }}
+                {% for error in form.creator_name.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <div class="form-group">
+            {{ form.submit(class="btn") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

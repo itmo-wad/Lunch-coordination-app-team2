@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Добавление опций | Что на обед?{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">Добавление опций для опроса "{{ poll.title }}"</h2>
+    
+    <div class="card-meta">
+        <p>Добавьте варианты обеда, за которые участники смогут голосовать</p>
+    </div>
+    
+    <form method="POST" action="{{ url_for('polls.add_options', poll_id=poll.id) }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.name.label }}
+            {{ form.name(class="form-control") }}
+            {% for error in form.name.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class="form-control", rows=2) }}
+            {% for error in form.description.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.submit(class="btn") }}
+        </div>
+    </form>
+    
+    <hr>
+    
+    <h3>Добавленные опции:</h3>
+    
+    {% if options %}
+        <div class="options-list">
+            {% for option in options %}
+                <div class="option-item card">
+                    <h4>{{ option.name }}</h4>
+                    {% if option.description %}
+                        <p>{{ option.description }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Пока нет добавленных опций. Добавьте хотя бы две опции для создания опроса.</p>
+    {% endif %}
+    
+    <div class="form-actions">
+        {% if options|length >= 2 %}
+            <a href="{{ url_for('polls.view', poll_hash=poll.url_hash) }}" class="btn">Завершить создание опроса</a>
+        {% else %}
+            <p>Добавьте минимум 2 варианта для завершения опроса</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
