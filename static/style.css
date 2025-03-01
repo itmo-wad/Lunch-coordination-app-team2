@@ -281,3 +281,18 @@ textarea {
 .result-score span {
     margin-right: 15px;
 }
+
+.checkbox-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-inline input[type="checkbox"] {
+    margin: 0;
+}
+
+.checkbox-inline label {
+    margin: 0;
+    display: inline;
+}

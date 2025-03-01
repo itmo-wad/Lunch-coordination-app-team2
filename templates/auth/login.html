@@ -25,8 +25,8 @@
             {% endfor %}
         </div>
 
-        <div class="form-group">
-            {{ form.remember_me() }} {{ form.remember_me.label }}
+        <div class="form-group checkbox-inline">
+            {{ form.remember_me() }} <label for="remember_me">{{ form.remember_me.label.text }}</label>
         </div>
 
         <div class="form-group">

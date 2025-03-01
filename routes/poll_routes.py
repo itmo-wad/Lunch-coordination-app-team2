@@ -29,13 +29,15 @@ def create_poll():
         else:
             poll.creator_name = form.creator_name.data
 
+        db.session.add(poll)
+        db.session.commit()  # Commit here to get poll.id
+
+        # Now that we have poll.id, add it to the session
+        if not current_user.is_authenticated:
             if 'created_polls' not in session:
                 session['created_polls'] = []
             session['created_polls'].append(poll.id)
             session.modified = True
-
-        db.session.add(poll)
-        db.session.commit()
 
         flash('Poll created successfully!')
         return redirect(url_for('polls.add_options', poll_id=poll.id))
@@ -47,11 +49,16 @@ def create_poll():
 def add_options(poll_id):
     poll = Poll.query.get_or_404(poll_id)
 
-    if poll.creator_id and poll.creator_id != current_user.id:
-        abort(403)
+    # Modified authorization check
+    is_authorized = False
+    if current_user.is_authenticated and poll.creator_id == current_user.id:
+        is_authorized = True
+    elif not current_user.is_authenticated and 'created_polls' in session and poll_id in session['created_polls']:
+        is_authorized = True
 
-    if not poll.creator_id and ('created_polls' not in session or poll_id not in session['created_polls']):
-        abort(403)
+    if not is_authorized:
+        flash('You do not have permission to add options to this poll.')
+        return redirect(url_for('polls.index'))
 
     form = OptionForm()
 
@@ -75,6 +82,12 @@ def add_options(poll_id):
 def view(poll_hash):
     poll = Poll.query.filter_by(url_hash=poll_hash).first_or_404()
 
+    # Check if the poll has options
+    options = Option.query.filter_by(poll_id=poll.id).all()
+    if not options:
+        flash('This poll has no options to vote on yet.')
+        return redirect(url_for('polls.index'))
+
     if not poll.active or poll.is_expired():
         return redirect(url_for('polls.results', poll_hash=poll_hash))
 
@@ -91,7 +104,6 @@ def view(poll_hash):
         return redirect(url_for('polls.results', poll_hash=poll_hash))
 
     form = VoteForm()
-    options = Option.query.filter_by(poll_id=poll.id).all()
 
     if form.validate_on_submit():
         for option in options:
