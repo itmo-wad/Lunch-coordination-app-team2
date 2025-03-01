@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Что на обед?{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="{{ url_for('polls.index') }}">🍕 Что на обед?</a></h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('polls.index') }}">Главная</a></li>
+                    <li><a href="{{ url_for('polls.create_poll') }}">Создать опрос</a></li>
+                    <li><a href="{{ url_for('history.index') }}">История</a></li>
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('auth.logout') }}">Выйти</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('auth.login') }}">Войти</a></li>
+                        <li><a href="{{ url_for('auth.register') }}">Регистрация</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; {{ now.year }} Что на обед? - Приложение для координации обедов</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
