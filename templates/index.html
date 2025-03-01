@@ -5,44 +5,49 @@
 {% block content %}
     <div class="hero">
         <h2>Decide together what to order for lunch!</h2>
-        <p>Create polls, vote and coordinate food orders for your team</p>
-        <a href="{{ url_for('polls.create_poll') }}" class="btn">Create a new poll</a>
+        <p>Create polls, vote and coordinate food orders for your team in minutes</p>
+        <a href="{{ url_for('polls.create_poll') }}" class="btn btn-large">Create a new poll</a>
     </div>
 
     <div class="features">
         <div class="card">
             <h3>🔒 Private Polls</h3>
-            <p>Each poll has a unique link that you can share only with people you want to participate.</p>
+            <p>Each poll has a unique link that you can share only with people you want to participate. No public visibility unless you share the link.</p>
         </div>
 
         <div class="card">
-            <h3>👥 Team Voting</h3>
-            <p>Your team members can vote on lunch options with simple like/neutral/dislike reactions.</p>
+            <h3>👥 Simple Voting</h3>
+            <p>Your team members can vote on lunch options with intuitive like, neutral, or dislike reactions. No complicated systems - just express your preference.</p>
         </div>
 
         <div class="card">
-            <h3>📊 Instant Results</h3>
-            <p>Get real-time results to see which lunch option is winning. No more lengthy discussions!</p>
+            <h3>📊 Real-time Results</h3>
+            <p>Get instant results to see which lunch option is winning. No more lengthy discussions about where to order from!</p>
         </div>
 
         <div class="card">
-            <h3>⏱️ Deadlines</h3>
-            <p>Set a deadline for voting to make sure you order lunch on time.</p>
+            <h3>⏱️ Timed Decisions</h3>
+            <p>Set a deadline for voting to ensure you place your lunch order on time. The system automatically closes voting when the deadline is reached.</p>
         </div>
     </div>
 
     {% if current_user.is_authenticated %}
         <div class="cta-box">
             <h3>Ready to create your lunch poll?</h3>
-            <a href="{{ url_for('polls.create_poll') }}" class="btn">Create now</a>
-            <a href="{{ url_for('history.index') }}" class="btn btn-secondary">View your polls</a>
+            <p>You're logged in and ready to go! Create a new poll or check your existing ones.</p>
+            <div>
+                <a href="{{ url_for('polls.create_poll') }}" class="btn">Create new poll</a>
+                <a href="{{ url_for('history.index') }}" class="btn btn-secondary">View your polls</a>
+            </div>
         </div>
     {% else %}
         <div class="cta-box">
             <h3>Want to track your polls?</h3>
-            <p>Create an account to keep track of all your polls in one place.</p>
-            <a href="{{ url_for('auth.register') }}" class="btn">Register</a>
-            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Login</a>
+            <p>Create an account to keep all your lunch polls organized in one place. You can create polls without an account, but registered users can access their poll history anytime.</p>
+            <div>
+                <a href="{{ url_for('auth.register') }}" class="btn">Register now</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Login</a>
+            </div>
         </div>
     {% endif %}
 {% endblock %}

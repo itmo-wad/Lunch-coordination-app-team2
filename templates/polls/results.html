@@ -84,7 +84,7 @@
             {% endif %}
         {% endif %}
 
-        {% if poll.active and (current_user.is_authenticated and poll.creator_id == current_user.id) or (not current_user.is_authenticated and 'created_polls' in session and poll.id in session['created_polls']) %}
+        {% if (poll.active and not poll.is_expired()) and ((current_user.is_authenticated and poll.creator_id == current_user.id) or (not current_user.is_authenticated and 'created_polls' in session and poll.id in session['created_polls'])) %}
             <hr>
             <div class="admin-actions">
                 <h4>Creator actions:</h4>

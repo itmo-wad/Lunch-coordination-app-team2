@@ -18,9 +18,9 @@
             {% if poll.deadline %}
                 <p>
                     Deadline:
-                    <span id="poll-deadline" data-deadline="{{ poll.deadline.isoformat() }}">
-                    {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}
-                </span>
+                    <span id="poll-deadline" data-deadline="{{ poll.deadline.isoformat() }}" class="badge badge-warning">
+                        {{ poll.deadline.strftime('%d.%m.%Y %H:%M') }}
+                    </span>
                 </p>
             {% endif %}
         </div>
@@ -32,10 +32,9 @@
         <div class="share-poll">
             <button id="copy-poll-link" class="btn btn-secondary"
                     data-link="{{ url_for('polls.view', poll_hash=poll.url_hash, _external=True) }}">
-                Copy link
+                Copy poll link
             </button>
-            <a href="{{ url_for('polls.results', poll_hash=poll.url_hash) }}" class="btn btn-secondary">View current
-                results</a>
+            <a href="{{ url_for('polls.results', poll_hash=poll.url_hash) }}" class="btn btn-outline">View current results</a>
         </div>
 
         <hr>
@@ -45,7 +44,7 @@
 
             <div class="form-group">
                 {{ form.voter_name.label }}
-                {{ form.voter_name(class="form-control") }}
+                {{ form.voter_name(class="form-control", placeholder="Enter your name") }}
                 {% for error in form.voter_name.errors %}
                     <span class="error">{{ error }}</span>
                 {% endfor %}
