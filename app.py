@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
@@ -14,9 +14,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'auth.login'
 
 from models import User, Poll, Option, Vote
+with app.app_context():
+    db.create_all()
 
 @app.context_processor
 def inject_now():
@@ -28,8 +30,9 @@ app.register_blueprint(auth_routes)
 app.register_blueprint(poll_routes)
 app.register_blueprint(history_routes)
 
-with app.app_context():
-    db.create_all()
+@app.route('/')
+def root():
+    return redirect(url_for('polls.index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -5,7 +5,7 @@ from forms import PollForm, OptionForm, VoteForm
 from app import db
 import uuid
 
-poll_routes = Blueprint('polls', __name__, url_prefix='/polls')
+poll_routes = Blueprint('polls', __name__)
 
 
 @poll_routes.route('/')
@@ -14,7 +14,7 @@ def index():
     return render_template('index.html', polls=active_polls)
 
 
-@poll_routes.route('/polls/new', methods=['GET', 'POST'])
+@poll_routes.route('/new', methods=['GET', 'POST'])
 def create_poll():
     form = PollForm()
     if form.validate_on_submit():

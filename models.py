@@ -8,7 +8,7 @@ import secrets
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
-    email = db.Column(db.String(120), unique=True, index=True)
+    email = db.Column(db.String(120), unique=True, index=True, nullable=True)
     password_hash = db.Column(db.String(128))
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
@@ -32,7 +32,7 @@ class Poll(db.Model):
     description = db.Column(db.Text)
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     creator_name = db.Column(db.String(100))
-    deadline = db.Column(db.DateTime)
+    deadline = db.Column(db.DateTime(timezone=True))
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     active = db.Column(db.Boolean, default=True)
     url_hash = db.Column(db.String(16), unique=True, index=True)
@@ -45,9 +45,13 @@ class Poll(db.Model):
         self.url_hash = secrets.token_hex(8)
 
     def is_expired(self):
-        if not self.deadline:
-            return False
-        return datetime.now(timezone.utc) > self.deadline
+            if not self.deadline:
+                return False
+            if self.deadline.tzinfo is None:
+                deadline_aware = self.deadline.replace(tzinfo=timezone.utc)
+            else:
+                deadline_aware = self.deadline
+            return datetime.now(timezone.utc) > deadline_aware
 
     def get_results(self):
         results = {}
