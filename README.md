@@ -5,3 +5,16 @@
 **Solution:** A web-based lunch voting tool where team members can quickly vote on meal options within a set timeframe. The system helps teams make faster decisions about group lunch orders.
 
 **Simplified cases:** A team needs to quickly decide on lunch options. They create a poll, vote within 30 minutes, and automatically get the winning choice. A team manager can access historical data to analyze lunch patterns and optimize food expenses based on team preferences.
+
+### Technical section
+
+For running this app you will need to install `Python 3` and `pip` on your operating system.<br><br>
+
+With Python and pip installed, you will need to install `Flask`, `Flask-Login`, `Flask SQLAlchemy` and `Flask-WTF`.<br>
+Install them with the following command:<br>
+```
+pip install -r requirements.txt
+```
+
+TODO: Insert EVERYTHING on how to run this thing OR create a docker container/compose to run this.
+
