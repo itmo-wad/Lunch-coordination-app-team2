@@ -36,6 +36,7 @@ class Poll(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     active = db.Column(db.Boolean, default=True)
     url_hash = db.Column(db.String(16), unique=True, index=True)
+    options_to_select = db.Column(db.Integer, default=1)
 
     options = db.relationship('Option', backref='poll', lazy='dynamic', cascade='all, delete-orphan')
     votes = db.relationship('Vote', backref='poll', lazy='dynamic', cascade='all, delete-orphan')
@@ -54,6 +55,7 @@ class Poll(db.Model):
         return datetime.now(timezone.utc) > deadline_aware
 
     def get_results(self):
+        # Standard for displaying results
         results = {}
         for option in self.options:
             likes = Vote.query.filter_by(poll_id=self.id, option_id=option.id, vote_type=1).count()
@@ -69,6 +71,61 @@ class Poll(db.Model):
             }
 
         return results
+
+    def get_optimal_solution(self):
+        from solution import find_solution
+
+        voter_sessions = db.session.query(Vote.session_id).filter_by(poll_id=self.id).distinct().all()
+        voter_sessions = [vs[0] for vs in voter_sessions]
+
+        preferences = {i: set() for i, _ in enumerate(voter_sessions)}
+        allergies = {i: set() for i, _ in enumerate(voter_sessions)}
+
+        for i, session_id in enumerate(voter_sessions):
+            liked_votes = Vote.query.filter_by(poll_id=self.id, session_id=session_id, vote_type=1).all()
+            for vote in liked_votes:
+                option = Option.query.get(vote.option_id)
+                preferences[i].add(option.name)  # TODO: Почему не option.id?
+
+            disliked_votes = Vote.query.filter_by(poll_id=self.id, session_id=session_id, vote_type=-1).all()
+            for vote in disliked_votes:
+                option = Option.query.get(vote.option_id)
+                allergies[i].add(option.name)  # TODO: Почему не option.id?
+
+        option_pool = [option.name for option in self.options]  # TODO: Имя или option.id?
+
+        if not voter_sessions:
+            return None
+
+        options_to_select = self.options_to_select or 1
+
+        best_solution, metrics, _ = find_solution(
+            option_pool,
+            options_to_select,
+            preferences,
+            allergies,
+            iterations=100,  # TODO: вынести в конфиг
+            steps=1000,
+            metrics_coefs=(2, 1)
+        )
+
+        # Преобразуем результаты
+        optimal_options = []
+        for option_name, count in best_solution.items():
+            option = Option.query.filter_by(poll_id=self.id, name=option_name).first()
+            if option:
+                optimal_options.append({
+                    'option': option,
+                    'count': count
+                })
+
+        return {
+            'options': optimal_options,
+            'metrics': {
+                'equality': metrics[0],
+                'satisfaction': metrics[1]
+            }
+        }
 
 
 class Option(db.Model):
