@@ -43,6 +43,42 @@
 
         <h3>Voting results:</h3>
 
+        {% if optimal_solution %}
+            <hr>
+            <h3>Optimal solution:</h3>
+            <div class="card">
+                <div class="card-body">
+                    <p>The system has selected the optimal combination of {{ poll.options_to_select }} options, taking into account the preferences and restrictions of all participants:</p>
+
+                    <div class="optimal-results">
+                        {% for item in optimal_solution.options %}
+                            <div class="result-item winner">
+                                <h4>{{ item.option.name }} {% if loop.first %}🏆{% endif %}</h4>
+                                {% if item.option.description %}
+                                    <p>{{ item.option.description }}</p>
+                                {% endif %}
+                                {% if item.count > 1 %}
+                                    <div class="result-score">
+                                        <span class="total-score">Amount: <strong>{{ item.count }}</strong></span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="metrics-info">
+                        <p><strong>Solution quality metrics:</strong></p>
+                        <ul>
+                            <li>Equality of distribution: <strong>{{ optimal_solution.metrics.equality }}</strong></li>
+                            <li>Participant satisfaction: <strong>{{ optimal_solution.metrics.satisfaction }}</strong></li>
+                        </ul>
+                        <p class="note">The closer the values are to 1, the better the solution.</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        # TODO: Надо?
         {% if results %}
             <div class="results-list">
                 {% for result in results %}

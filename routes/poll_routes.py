@@ -20,7 +20,8 @@ def create_poll():
         poll = Poll(
             title=form.title.data,
             description=form.description.data,
-            deadline=form.deadline.data
+            deadline=form.deadline.data,
+            options_to_select = form.options_to_select.data
         )
 
         if current_user.is_authenticated:
@@ -135,13 +136,18 @@ def view(poll_hash):
 @poll_routes.route('/p/<string:poll_hash>/results')
 def results(poll_hash):
     poll = Poll.query.filter_by(url_hash=poll_hash).first_or_404()
-    results = poll.get_results()
 
+    standard_results = poll.get_results()
     sorted_results = sorted(
-        results.values(),
+        standard_results.values(),
         key=lambda x: x['score'],
         reverse=True
     )
+
+    optimal_solution = None
+    if not poll.active or poll.is_expired():
+        if Vote.query.filter_by(poll_id=poll.id).count() > 0:
+            optimal_solution = poll.get_optimal_solution()
 
     has_voted = False
     if 'session_id' in session:
@@ -151,7 +157,12 @@ def results(poll_hash):
         ).first()
         has_voted = existing_vote is not None
 
-    return render_template('polls/results.html', poll=poll, results=sorted_results, has_voted=has_voted)
+    return render_template(
+        'polls/results.html',
+        poll=poll,
+        results=sorted_results,
+        has_voted=has_voted,
+        optimal_solution=optimal_solution)
 
 
 @poll_routes.route('/p/<string:poll_hash>/finish', methods=['POST'])

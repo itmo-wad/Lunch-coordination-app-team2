@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional
+from wtforms.fields.numeric import IntegerField
+from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional, NumberRange
 from wtforms.fields import DateTimeLocalField
 
 
@@ -23,6 +24,9 @@ class PollForm(FlaskForm):
     description = TextAreaField('Description', validators=[Optional(), Length(max=500)])
     deadline = DateTimeLocalField('Deadline (optional)', format='%Y-%m-%dT%H:%M', validators=[Optional()])
     creator_name = StringField('Your Name', validators=[Optional(), Length(max=100)])
+    options_to_select = IntegerField('How many options should be selected in the final solution?',
+                                     validators=[DataRequired(), NumberRange(min=1)],
+                                     default=1)
     submit = SubmitField('Create Poll')
 
 

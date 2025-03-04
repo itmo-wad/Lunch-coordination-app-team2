@@ -619,6 +619,36 @@ textarea:focus {
 }
 
 
+.optimal-results {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.metrics-info {
+    background-color: var(--primary-light);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.metrics-info ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 10px 0;
+}
+
+.metrics-info li {
+    padding: 5px 0;
+}
+
+.results-explanation {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: var(--secondary-light);
+    border-radius: var(--border-radius);
+}
+
+
 @media (max-width: 768px) {
     header .container {
         flex-direction: column;
