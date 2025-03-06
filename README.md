@@ -16,5 +16,12 @@ Install them with the following command:<br>
 pip install -r requirements.txt
 ```
 
+Also you need to configure the environment by copying `.env.example` and renaming it to `.env`, then editing the required parameters as desired:
+
+| Parameter | Description |
+|-----------|-------------|
+| `SECRET_KEY` | Your super secret key for Flask sessions and security |
+| `DB_URI` | Database connection string (for example: sqlite:///lunch_app.db) |
+
 TODO: Insert EVERYTHING on how to run this thing OR create a docker container/compose to run this.
 
