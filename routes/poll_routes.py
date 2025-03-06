@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import current_user
 from models import Poll, Option, Vote
 from forms import PollForm, OptionForm, VoteForm
-from app import db
+from extensions import db
 import uuid
 
 poll_routes = Blueprint('polls', __name__)
