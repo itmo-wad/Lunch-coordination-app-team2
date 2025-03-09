@@ -10,7 +10,7 @@
 
 For running this app you will need to install `Python 3` and `pip` on your operating system.<br><br>
 
-With Python and pip installed, you will need to install `Flask`, `Flask-Login`, `Flask SQLAlchemy` and `Flask-WTF`.<br>
+With Python and pip installed, you will need to install `Flask`, `Flask-Login`, `Werkzeug`, `WTForms`, `Flask-SQLAlchemy`, `Flask-WTF`, `python-dotenv`.<br>
 Install them with the following command:<br>
 ```
 pip install -r requirements.txt
