@@ -1,4 +1,4 @@
-### "🍕 What's for Lunch?" – a simple and intuitive online tool for coordinating team lunch orders.
+## "🍕 What's for Lunch?" – a simple and intuitive online tool for coordinating team lunch orders.
 
 **Problem:** Coordinating lunch orders with colleagues is often chaotic and time-consuming. Teams waste time in chat discussions, struggle to reach consensus on menu choices, and often default to the same items due to decision fatigue.
 
@@ -6,7 +6,7 @@
 
 **Simplified cases:** A team needs to quickly decide on lunch options. They create a poll, vote within 30 minutes, and automatically get the winning choice. A team manager can access historical data to analyze lunch patterns and optimize food expenses based on team preferences.
 
-### Technical section
+## Technical section
 
 For running this app you will need to install `Python 3` and `pip` on your operating system.<br><br>
 
@@ -23,5 +23,10 @@ Also you need to configure the environment by copying `.env.example` and renamin
 | `SECRET_KEY` | Your super secret key for Flask sessions and security |
 | `DB_URI` | Database connection string (for example: sqlite:///lunch_app.db) |
 
-TODO: Insert EVERYTHING on how to run this thing OR create a docker container/compose to run this.
 
+When you have everything installed, configured and running, just type
+```
+python app.py
+```
+
+The WebApp will run at `127.0.0.1:5000`. Use your browser to navigate to that address.
